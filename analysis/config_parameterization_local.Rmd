@@ -32,17 +32,11 @@ slabs_Atl <-
   c(
     -Inf,
     26.00,
-    26.50,
     26.75,
-    27.00,
     27.25,
-    27.50,
     27.75,
-    27.85,
     27.95,
-    28.05,
     28.10,
-    28.15,
     28.20,
     Inf
   )
@@ -51,15 +45,10 @@ slabs_Atl <-
 slabs_Ind_Pac <-
   c(-Inf,
     26.00,
-    26.50,
     26.75,
-    27.00,
     27.25,
-    27.50,
     27.75,
-    27.85,
     27.95,
-    28.05,
     28.10,
     Inf)
 
@@ -76,13 +65,13 @@ MLR_predictors <- c(
 params_local <-
   lst(
     # model climate forcing with options of variable ("AD") or constant ("CB")
-    model_runs = "CB",
+    model_runs = "AD",
     # model subsetting with options of "GLODAP" or "random"
-    subsetting = "random",
+    subsetting = "GLODAP",
     # random subsetting with options of "grid" or "lat"
     random = "grid",
     # ID of current sensitivity run
-    Version_ID = "v_XXX",
+    Version_ID = "v_109",
     # f flags accepted for GLODAP data
     flag_f = c(2),
     # qc flags accepted for GLODAP data
@@ -90,7 +79,7 @@ params_local <-
     # Should A16 cruise from 2013/14 be included in middle era (y/n)
     A16_GO_SHIP = "y",
     # Shallowest depth for data to be included in MLR fitting
-    depth_min = 0,
+    depth_min = 150,
     # Shallowest water depth for data to be included in MLR fitting
     bottomdepth_min = 0,
     # Lowest neutral density to map Cant with eMLR approach (in surface layer?)
