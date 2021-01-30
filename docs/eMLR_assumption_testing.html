@@ -1,0 +1,9585 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Jens Daniel Müller and Donghe Zhu" />
+
+
+<title>eMLR - assumption testing</title>
+
+<script src="site_libs/header-attrs-2.5/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/flatly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="site_libs/anchor-sections-1.0/anchor-sections.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+.tocify-subheader {
+  display: inline;
+}
+.tocify-subheader .tocify-item {
+  font-size: 0.95em;
+}
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">eMLR mod v_109</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Config
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="config_dependencies.html">Dependencies</a>
+    </li>
+    <li>
+      <a href="config_parameterization_local.html">Parameterization</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    eMLR
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="eMLR_GLODAPv2_2020_subsetting.html">GLODAP subsetting</a>
+    </li>
+    <li>
+      <a href="eMLR_data_preparation.html">Data preparation</a>
+    </li>
+    <li>
+      <a href="eMLR_assumption_testing.html">Assumption testing</a>
+    </li>
+    <li>
+      <a href="eMLR_model_fitting.html">Model fitting</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Mapping
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="mapping_predictor_preparation.html">Predictor preparation</a>
+    </li>
+    <li>
+      <a href="mapping_cant.html">Cant calculation</a>
+    </li>
+    <li>
+      <a href="mapping_target_variable.html">Target variable calculation</a>
+    </li>
+    <li>
+      <a href="mapping_model_cant.html">Model Cant calculation</a>
+    </li>
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Analysis
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="analysis_cant_budgets.html">Cant budgets</a>
+    </li>
+    <li>
+      <a href="analysis_inventory_maps.html">Inventory maps</a>
+    </li>
+    <li>
+      <a href="analysis_zonal_mean_sections.html">Zonal mean sections</a>
+    </li>
+    <li>
+      <a href="analysis_global_section.html">Global sections</a>
+    </li>
+    <li>
+      <a href="analysis_isoneutral_slab_distribution.html">Isoneutral slab distribution</a>
+    </li>
+    <li>
+      <a href="analysis_others.html">Others</a>
+    </li>
+  </ul>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/jens-daniel-mueller/emlr_mod_v_109">
+    <span class="fa fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+<li>
+  <a href="https://jens-daniel-mueller.github.io/">
+    <span class="fa fa-home"></span>
+     
+    Jens' homepage
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+<div class="btn-group pull-right">
+<button type="button" class="btn btn-default btn-xs dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">eMLR - assumption testing</h1>
+<h4 class="author">Jens Daniel Müller and Donghe Zhu</h4>
+<h4 class="date">30 January, 2021</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2021-01-30
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>emlr_mod_v_109/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20200707code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20200707)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20200707code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20200707)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleremlrmodv109treeac946e200e5c9b81c82429740a960b8317d35962targetblankac946e2a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/jens-daniel-mueller/emlr_mod_v_109/tree/ac946e200e5c9b81c82429740a960b8317d35962" target="_blank">ac946e2</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomjensdanielmuelleremlrmodv109treeac946e200e5c9b81c82429740a960b8317d35962targetblankac946e2a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://github.com/jens-daniel-mueller/emlr_mod_v_109/tree/ac946e200e5c9b81c82429740a960b8317d35962" target="_blank">ac946e2</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rproj.user/
+
+Unstaged changes:
+    Modified:   analysis/_site.yml
+    Modified:   data/auxillary/params_local.rds
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/eMLR_assumption_testing.Rmd</code>) and HTML (<code>docs/eMLR_assumption_testing.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/jens-daniel-mueller/emlr_mod_v_109/blob/ef2f7b238534bf4fbaf595460586d13ba2ac36e0/analysis/eMLR_assumption_testing.Rmd" target="_blank">ef2f7b2</a>
+</td>
+<td>
+Jens Müller
+</td>
+<td>
+2021-01-29
+</td>
+<td>
+Initial commit
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<div id="required-data" class="section level1" number="1">
+<h1 number="1"><span class="header-section-number">1</span> Required data</h1>
+<p>Required are:</p>
+<ul>
+<li>cleaned and prepared GLODAP-based synthetic cmorized model subsetting file</li>
+</ul>
+<pre class="r"><code>GLODAP &lt;-
+  read_csv(paste(path_version_data,
+                 &quot;GLODAPv2.2020_MLR_fitting_ready.csv&quot;,
+                 sep = &quot;&quot;))</code></pre>
+</div>
+<div id="predictor-correlation" class="section level1" number="2">
+<h1 number="2"><span class="header-section-number">2</span> Predictor correlation</h1>
+<p>The correlation between:</p>
+<ul>
+<li>pairs of seven potential predictor variables and</li>
+<li>C* and seven potential predictor variables</li>
+</ul>
+<p>were investigated based on:</p>
+<ul>
+<li>property-property plots and</li>
+<li>calculated correlation coefficients.</li>
+</ul>
+<div id="correlation-plots" class="section level2" number="2.1">
+<h2 number="2.1"><span class="header-section-number">2.1</span> Correlation plots</h2>
+<p>For an overview, a random subset of data from all eras was plotted separately for both basins, with color indicating neutral density slabs (high density = dark-purple color).</p>
+<pre class="r"><code>for (i_basin in unique(GLODAP$basin)) {
+# i_basin &lt;- unique(GLODAP$basin)[1]
+
+print(
+GLODAP %&gt;% 
+  filter(basin == i_basin) %&gt;% 
+  sample_frac(0.05) %&gt;% 
+  ggpairs(columns = c(params_local$MLR_target,
+                      params_local$MLR_predictors),
+          upper = &quot;blank&quot;,
+          ggplot2::aes(col = gamma_slab, fill = gamma_slab, alpha = 0.01)) +
+      scale_fill_viridis_d(direction = -1) +
+      scale_color_viridis_d(direction = -1) +
+      labs(title = paste(&quot;Basin:&quot;, i_basin ,&quot;| era: all | subsample size: 5 % of&quot;,
+                         nrow(GLODAP %&gt;% filter(basin == i_basin))))
+)
+}</code></pre>
+<p><img src="figure/eMLR_assumption_testing.Rmd/predictor_correlation_per_basin-1.png" width="672" style="display: block; margin: auto;" /><img src="figure/eMLR_assumption_testing.Rmd/predictor_correlation_per_basin-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Individual correlation plots for each basin, era and neutral density (gamma) slab are available at:</p>
+<p>/nfs/kryo/work/jenmueller/emlr_cant/model/v_109/figures/Observations_correlation/</p>
+<pre class="r"><code>if (params_local$plot_all_figures == &quot;y&quot;) {
+
+for (i_basin in unique(GLODAP$basin)) {
+  for (i_era in unique(GLODAP$era)) {
+    # i_basin &lt;- unique(GLODAP$basin)[1]
+    # i_era   &lt;- unique(GLODAP$era)[1]
+
+    GLODAP_basin_era &lt;- GLODAP %&gt;%
+      filter(basin == i_basin,
+             era == i_era)
+    
+    for (i_gamma_slab in unique(GLODAP_basin_era$gamma_slab)) {
+      # i_gamma_slab &lt;- unique(GLODAP_basin_era$gamma_slab)[5]
+
+      GLODAP_highlight &lt;- GLODAP_basin_era %&gt;%
+        mutate(gamma_highlight = if_else(gamma_slab == i_gamma_slab,
+                                         &quot;in&quot;, &quot;out&quot;)) %&gt;%
+        arrange(desc(gamma_highlight))
+      
+      p &lt;- GLODAP_highlight %&gt;%
+        ggpairs(
+          columns = c(params_local$MLR_target,
+                      params_local$MLR_predictors),
+          ggplot2::aes(
+            col = gamma_highlight,
+            fill = gamma_highlight,
+            alpha = 0.01
+          )
+        ) +
+        scale_fill_manual(values = c(&quot;red&quot;, &quot;grey&quot;)) +
+        scale_color_manual(values = c(&quot;red&quot;, &quot;grey&quot;)) +
+        labs(
+          title = paste(
+            i_era,
+            &quot;|&quot;,
+            i_basin,
+            &quot;| Gamma slab&quot;,
+            i_gamma_slab,
+            &quot;| # obs total&quot;,
+            nrow(GLODAP_basin_era),
+            &quot;| # obs slab&quot;,
+            nrow(GLODAP_highlight %&gt;%
+                   filter(gamma_highlight == &quot;in&quot;))
+          )
+        )
+      
+      png(
+        filename = paste(
+          path_version_figures,
+          &quot;Observations_correlation/&quot;,
+          paste(
+            &quot;Predictor_correlation&quot;,
+            i_era,
+            i_basin,
+            i_gamma_slab,
+            &quot;.png&quot;,
+            sep = &quot;_&quot;
+          ),
+          sep = &quot;&quot;),
+        width = 12,
+        height = 12,
+        units = &quot;in&quot;,
+        res = 300
+      )
+      
+      print(p)
+      
+      dev.off()
+      
+    }
+  }
+}
+
+}</code></pre>
+</div>
+<div id="correlation-assessment" class="section level2" number="2.2">
+<h2 number="2.2"><span class="header-section-number">2.2</span> Correlation assessment</h2>
+<div id="calculation-of-correlation-coeffcients" class="section level3" number="2.2.1">
+<h3 number="2.2.1"><span class="header-section-number">2.2.1</span> Calculation of correlation coeffcients</h3>
+<p>Correlation coefficients were calculated individually within each slabs, era and basin.</p>
+<pre class="r"><code>for (i_basin in unique(GLODAP$basin)) {
+  for (i_era in unique(GLODAP$era)) {
+    # i_basin &lt;- unique(GLODAP$basin)[1]
+    # i_era   &lt;- unique(GLODAP$era)[1]
+    
+    GLODAP_basin_era &lt;- GLODAP %&gt;%
+      filter(basin == i_basin,
+             era == i_era) %&gt;%
+      select(basin,
+             era,
+             gamma_slab,
+             params_local$MLR_target,
+             params_local$MLR_predictors)
+    
+    for (i_gamma_slab in unique(GLODAP_basin_era$gamma_slab)) {
+      # i_gamma_slab &lt;- unique(GLODAP_basin_era$gamma_slab)[5]
+      print(i_gamma_slab)
+      
+      GLODAP_basin_era_slab &lt;- GLODAP_basin_era %&gt;%
+        filter(gamma_slab == i_gamma_slab)
+      
+      # calculate correlation table
+      cor_target_predictor_temp &lt;- GLODAP_basin_era_slab %&gt;%
+        select(-c(basin, era, gamma_slab)) %&gt;%
+        correlate() %&gt;%
+        focus(params_local$MLR_target) %&gt;%
+        mutate(basin = i_basin,
+               era = i_era,
+               gamma_slab = i_gamma_slab)
+      
+      if (exists(&quot;cor_target_predictor&quot;)) {
+        cor_target_predictor &lt;-
+          bind_rows(cor_target_predictor, cor_target_predictor_temp)
+      }
+      
+      if (!exists(&quot;cor_target_predictor&quot;)) {
+        cor_target_predictor &lt;- cor_target_predictor_temp
+      }
+      
+      
+      cor_predictors_temp &lt;- GLODAP_basin_era_slab %&gt;%
+        select(-c(basin, era, gamma_slab)) %&gt;%
+        correlate() %&gt;%
+        shave %&gt;%
+        stretch() %&gt;%
+        filter(!is.na(r),
+               x != params_local$MLR_target,
+               y != params_local$MLR_target) %&gt;%
+        mutate(pair = paste(x, y, sep = &quot; + &quot;)) %&gt;%
+        select(-c(x, y)) %&gt;%
+        mutate(basin = i_basin,
+               era = i_era,
+               gamma_slab = i_gamma_slab)
+      
+      if (exists(&quot;cor_predictors&quot;)) {
+        cor_predictors &lt;- bind_rows(cor_predictors, cor_predictors_temp)
+      }
+      
+      if (!exists(&quot;cor_predictors&quot;)) {
+        cor_predictors &lt;- cor_predictors_temp
+      }
+      
+      
+      
+    }
+  }
+}
+
+rm(cor_predictors_temp, cor_target_predictor_temp,
+   i_gamma_slab, i_era, i_basin,
+   GLODAP_basin_era, GLODAP_basin_era_slab)</code></pre>
+</div>
+<div id="predictor-pairs" class="section level3" number="2.2.2">
+<h3 number="2.2.2"><span class="header-section-number">2.2.2</span> Predictor pairs</h3>
+<p>Below, the range of correlations coefficients for each predictor pair is plotted per basin (facet) and density slab (color). Note that the range indicates the min and max values of in total 3 calculated coefficients (one per era).</p>
+<pre class="r"><code># calculate min, max, mean across all eras
+cor_predictors_stats &lt;- cor_predictors %&gt;% 
+  group_by(pair, basin, gamma_slab) %&gt;% 
+  summarise(mean_r = mean(r),
+            min_r = min(r),
+            max_r = max(r)) %&gt;% 
+  ungroup()
+
+# plot figure
+cor_predictors_stats %&gt;% 
+  mutate(pair = reorder(pair, mean_r)) %&gt;%
+  ggplot() +
+  geom_vline(xintercept = c(-0.9, 0.9), col = &quot;red&quot;) +
+  geom_vline(xintercept = 0) +
+  geom_linerange(
+    aes(y = pair, xmin = min_r, xmax = max_r, col = gamma_slab),
+    position = position_dodge(width = 0.6)) +
+  facet_wrap(~basin) +
+  scale_color_viridis_d(direction = -1) +
+  labs(x = &quot;correlation coefficient&quot;, y = &quot;&quot;) +
+  theme(legend.position = &quot;top&quot;)</code></pre>
+<p><img src="figure/eMLR_assumption_testing.Rmd/correlation_predictor_pairs-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># print table
+kable(cor_predictors_stats) %&gt;%
+  add_header_above() %&gt;%
+  kable_styling() %&gt;%
+  scroll_box(width = &quot;100%&quot;, height = &quot;400px&quot;)</code></pre>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; overflow-x: scroll; width:100%; ">
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+pair
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+basin
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+gamma_slab
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+mean_r
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+min_r
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+max_r
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+aou + nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.7335650
+</td>
+<td style="text-align:right;">
+0.5633370
+</td>
+<td style="text-align:right;">
+0.9037929
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+0.9614940
+</td>
+<td style="text-align:right;">
+0.9512917
+</td>
+<td style="text-align:right;">
+0.9777034
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.9639292
+</td>
+<td style="text-align:right;">
+0.9605678
+</td>
+<td style="text-align:right;">
+0.9688275
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.8767477
+</td>
+<td style="text-align:right;">
+0.8330114
+</td>
+<td style="text-align:right;">
+0.9259812
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.6937011
+</td>
+<td style="text-align:right;">
+0.5357846
+</td>
+<td style="text-align:right;">
+0.8213063
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.8665800
+</td>
+<td style="text-align:right;">
+0.7840879
+</td>
+<td style="text-align:right;">
+0.9138719
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+0.9707503
+</td>
+<td style="text-align:right;">
+0.9478695
+</td>
+<td style="text-align:right;">
+0.9870507
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+0.9227102
+</td>
+<td style="text-align:right;">
+0.8909483
+</td>
+<td style="text-align:right;">
+0.9583416
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.9236312
+</td>
+<td style="text-align:right;">
+0.9102931
+</td>
+<td style="text-align:right;">
+0.9441280
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+0.8533085
+</td>
+<td style="text-align:right;">
+0.7963778
+</td>
+<td style="text-align:right;">
+0.8856165
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.8976863
+</td>
+<td style="text-align:right;">
+0.8621399
+</td>
+<td style="text-align:right;">
+0.9173394
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.9276141
+</td>
+<td style="text-align:right;">
+0.9041582
+</td>
+<td style="text-align:right;">
+0.9501009
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.9743641
+</td>
+<td style="text-align:right;">
+0.9591573
+</td>
+<td style="text-align:right;">
+0.9833057
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.9916860
+</td>
+<td style="text-align:right;">
+0.9851548
+</td>
+<td style="text-align:right;">
+0.9958175
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+0.9847029
+</td>
+<td style="text-align:right;">
+0.9746634
+</td>
+<td style="text-align:right;">
+0.9927489
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.9305905
+</td>
+<td style="text-align:right;">
+0.8861831
+</td>
+<td style="text-align:right;">
+0.9749979
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+0.9373385
+</td>
+<td style="text-align:right;">
+0.9100314
+</td>
+<td style="text-align:right;">
+0.9673448
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.9321587
+</td>
+<td style="text-align:right;">
+0.9207856
+</td>
+<td style="text-align:right;">
+0.9382583
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.8355236
+</td>
+<td style="text-align:right;">
+0.7761436
+</td>
+<td style="text-align:right;">
+0.8985773
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.6590009
+</td>
+<td style="text-align:right;">
+0.4935103
+</td>
+<td style="text-align:right;">
+0.7976550
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.8529921
+</td>
+<td style="text-align:right;">
+0.7727443
+</td>
+<td style="text-align:right;">
+0.9025432
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+0.9671546
+</td>
+<td style="text-align:right;">
+0.9471476
+</td>
+<td style="text-align:right;">
+0.9802727
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+0.9013696
+</td>
+<td style="text-align:right;">
+0.8574432
+</td>
+<td style="text-align:right;">
+0.9612080
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.9501692
+</td>
+<td style="text-align:right;">
+0.9437607
+</td>
+<td style="text-align:right;">
+0.9549959
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+0.9559597
+</td>
+<td style="text-align:right;">
+0.9509788
+</td>
+<td style="text-align:right;">
+0.9626376
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.9619082
+</td>
+<td style="text-align:right;">
+0.9457586
+</td>
+<td style="text-align:right;">
+0.9741081
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.9690098
+</td>
+<td style="text-align:right;">
+0.9641734
+</td>
+<td style="text-align:right;">
+0.9771667
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.9920632
+</td>
+<td style="text-align:right;">
+0.9908698
+</td>
+<td style="text-align:right;">
+0.9928788
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.9954643
+</td>
+<td style="text-align:right;">
+0.9943682
+</td>
+<td style="text-align:right;">
+0.9967042
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+0.9881428
+</td>
+<td style="text-align:right;">
+0.9819434
+</td>
+<td style="text-align:right;">
+0.9932812
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.1924238
+</td>
+<td style="text-align:right;">
+0.0327941
+</td>
+<td style="text-align:right;">
+0.3520535
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+0.5241981
+</td>
+<td style="text-align:right;">
+0.3158522
+</td>
+<td style="text-align:right;">
+0.8493992
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.0538375
+</td>
+<td style="text-align:right;">
+-0.0737499
+</td>
+<td style="text-align:right;">
+0.1181858
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.1181420
+</td>
+<td style="text-align:right;">
+0.0371682
+</td>
+<td style="text-align:right;">
+0.2436302
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.2481067
+</td>
+<td style="text-align:right;">
+0.0377108
+</td>
+<td style="text-align:right;">
+0.4508169
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.6619425
+</td>
+<td style="text-align:right;">
+0.5625282
+</td>
+<td style="text-align:right;">
+0.7308603
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+0.9060784
+</td>
+<td style="text-align:right;">
+0.8648456
+</td>
+<td style="text-align:right;">
+0.9313898
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+0.8113440
+</td>
+<td style="text-align:right;">
+0.7410136
+</td>
+<td style="text-align:right;">
+0.9014739
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.5131357
+</td>
+<td style="text-align:right;">
+0.4207238
+</td>
+<td style="text-align:right;">
+0.5745539
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+0.4519107
+</td>
+<td style="text-align:right;">
+0.3308499
+</td>
+<td style="text-align:right;">
+0.5809414
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.6207769
+</td>
+<td style="text-align:right;">
+0.5306028
+</td>
+<td style="text-align:right;">
+0.6898821
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.2141042
+</td>
+<td style="text-align:right;">
+0.1271798
+</td>
+<td style="text-align:right;">
+0.2604223
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+-0.2201712
+</td>
+<td style="text-align:right;">
+-0.2951048
+</td>
+<td style="text-align:right;">
+-0.1059482
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+-0.2657505
+</td>
+<td style="text-align:right;">
+-0.4340594
+</td>
+<td style="text-align:right;">
+-0.0842118
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+-0.4264246
+</td>
+<td style="text-align:right;">
+-0.4903509
+</td>
+<td style="text-align:right;">
+-0.3187680
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.0300308
+</td>
+<td style="text-align:right;">
+-0.0955795
+</td>
+<td style="text-align:right;">
+0.1556412
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+0.6762331
+</td>
+<td style="text-align:right;">
+0.4991708
+</td>
+<td style="text-align:right;">
+0.9642921
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.6475217
+</td>
+<td style="text-align:right;">
+0.6192714
+</td>
+<td style="text-align:right;">
+0.6666780
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.5387586
+</td>
+<td style="text-align:right;">
+0.4712897
+</td>
+<td style="text-align:right;">
+0.6507222
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.4006662
+</td>
+<td style="text-align:right;">
+0.2562936
+</td>
+<td style="text-align:right;">
+0.5784041
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.7039802
+</td>
+<td style="text-align:right;">
+0.6761831
+</td>
+<td style="text-align:right;">
+0.7513682
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+0.9089292
+</td>
+<td style="text-align:right;">
+0.8913280
+</td>
+<td style="text-align:right;">
+0.9197396
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+0.6504663
+</td>
+<td style="text-align:right;">
+0.5258560
+</td>
+<td style="text-align:right;">
+0.8606818
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.7975318
+</td>
+<td style="text-align:right;">
+0.7381372
+</td>
+<td style="text-align:right;">
+0.8689219
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+0.7778776
+</td>
+<td style="text-align:right;">
+0.7314744
+</td>
+<td style="text-align:right;">
+0.8238287
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.8791042
+</td>
+<td style="text-align:right;">
+0.8525929
+</td>
+<td style="text-align:right;">
+0.9154384
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.9023803
+</td>
+<td style="text-align:right;">
+0.8748270
+</td>
+<td style="text-align:right;">
+0.9328901
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.9575906
+</td>
+<td style="text-align:right;">
+0.9453204
+</td>
+<td style="text-align:right;">
+0.9691235
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.9730112
+</td>
+<td style="text-align:right;">
+0.9637747
+</td>
+<td style="text-align:right;">
+0.9797846
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+0.8644368
+</td>
+<td style="text-align:right;">
+0.8317016
+</td>
+<td style="text-align:right;">
+0.8841020
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.5312160
+</td>
+<td style="text-align:right;">
+0.1782070
+</td>
+<td style="text-align:right;">
+0.8842251
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+0.9442411
+</td>
+<td style="text-align:right;">
+0.9096444
+</td>
+<td style="text-align:right;">
+0.9930568
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.9825085
+</td>
+<td style="text-align:right;">
+0.9787618
+</td>
+<td style="text-align:right;">
+0.9846100
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.9932851
+</td>
+<td style="text-align:right;">
+0.9907187
+</td>
+<td style="text-align:right;">
+0.9947405
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.9983382
+</td>
+<td style="text-align:right;">
+0.9980748
+</td>
+<td style="text-align:right;">
+0.9987822
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.9990007
+</td>
+<td style="text-align:right;">
+0.9985032
+</td>
+<td style="text-align:right;">
+0.9993109
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+0.9966529
+</td>
+<td style="text-align:right;">
+0.9958514
+</td>
+<td style="text-align:right;">
+0.9975871
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+0.9935555
+</td>
+<td style="text-align:right;">
+0.9930431
+</td>
+<td style="text-align:right;">
+0.9940317
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.9692586
+</td>
+<td style="text-align:right;">
+0.9542758
+</td>
+<td style="text-align:right;">
+0.9866553
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+0.9006493
+</td>
+<td style="text-align:right;">
+0.8463246
+</td>
+<td style="text-align:right;">
+0.9361745
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.9362835
+</td>
+<td style="text-align:right;">
+0.9012000
+</td>
+<td style="text-align:right;">
+0.9615567
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.9645625
+</td>
+<td style="text-align:right;">
+0.9394047
+</td>
+<td style="text-align:right;">
+0.9789873
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.9900549
+</td>
+<td style="text-align:right;">
+0.9833198
+</td>
+<td style="text-align:right;">
+0.9937659
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.9978961
+</td>
+<td style="text-align:right;">
+0.9947882
+</td>
+<td style="text-align:right;">
+0.9995380
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+0.9956344
+</td>
+<td style="text-align:right;">
+0.9911493
+</td>
+<td style="text-align:right;">
+0.9982714
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.2090337
+</td>
+<td style="text-align:right;">
+0.0796168
+</td>
+<td style="text-align:right;">
+0.3384507
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+0.6145762
+</td>
+<td style="text-align:right;">
+0.4042500
+</td>
+<td style="text-align:right;">
+0.9335554
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.2792578
+</td>
+<td style="text-align:right;">
+0.1492914
+</td>
+<td style="text-align:right;">
+0.3468528
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.5409553
+</td>
+<td style="text-align:right;">
+0.5216799
+</td>
+<td style="text-align:right;">
+0.5595181
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.8617192
+</td>
+<td style="text-align:right;">
+0.8487183
+</td>
+<td style="text-align:right;">
+0.8765060
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.9429681
+</td>
+<td style="text-align:right;">
+0.9333189
+</td>
+<td style="text-align:right;">
+0.9523135
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+0.9752914
+</td>
+<td style="text-align:right;">
+0.9735561
+</td>
+<td style="text-align:right;">
+0.9765542
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+0.9684011
+</td>
+<td style="text-align:right;">
+0.9595406
+</td>
+<td style="text-align:right;">
+0.9790465
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.7376466
+</td>
+<td style="text-align:right;">
+0.6399507
+</td>
+<td style="text-align:right;">
+0.7865135
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+0.6719562
+</td>
+<td style="text-align:right;">
+0.5828594
+</td>
+<td style="text-align:right;">
+0.7805459
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.7887535
+</td>
+<td style="text-align:right;">
+0.7561575
+</td>
+<td style="text-align:right;">
+0.8221895
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.4621835
+</td>
+<td style="text-align:right;">
+0.4420290
+</td>
+<td style="text-align:right;">
+0.4766646
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+-0.0661202
+</td>
+<td style="text-align:right;">
+-0.1703642
+</td>
+<td style="text-align:right;">
+0.0641935
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+-0.1549439
+</td>
+<td style="text-align:right;">
+-0.3386022
+</td>
+<td style="text-align:right;">
+0.0688545
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+-0.2818770
+</td>
+<td style="text-align:right;">
+-0.3906295
+</td>
+<td style="text-align:right;">
+-0.1240913
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.6393617
+</td>
+<td style="text-align:right;">
+0.5198502
+</td>
+<td style="text-align:right;">
+0.7588733
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+0.7942929
+</td>
+<td style="text-align:right;">
+0.6709321
+</td>
+<td style="text-align:right;">
+0.9834759
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.8048145
+</td>
+<td style="text-align:right;">
+0.7736922
+</td>
+<td style="text-align:right;">
+0.8204439
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.8545259
+</td>
+<td style="text-align:right;">
+0.8346231
+</td>
+<td style="text-align:right;">
+0.8769510
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.9057134
+</td>
+<td style="text-align:right;">
+0.8774473
+</td>
+<td style="text-align:right;">
+0.9219664
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.9282537
+</td>
+<td style="text-align:right;">
+0.8920531
+</td>
+<td style="text-align:right;">
+0.9591891
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+0.9292460
+</td>
+<td style="text-align:right;">
+0.9165989
+</td>
+<td style="text-align:right;">
+0.9470149
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+0.8074569
+</td>
+<td style="text-align:right;">
+0.7611962
+</td>
+<td style="text-align:right;">
+0.8541288
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.8612675
+</td>
+<td style="text-align:right;">
+0.7682704
+</td>
+<td style="text-align:right;">
+0.9361550
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+0.8810345
+</td>
+<td style="text-align:right;">
+0.8105119
+</td>
+<td style="text-align:right;">
+0.9195085
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.9403218
+</td>
+<td style="text-align:right;">
+0.9325566
+</td>
+<td style="text-align:right;">
+0.9479361
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.9646652
+</td>
+<td style="text-align:right;">
+0.9577628
+</td>
+<td style="text-align:right;">
+0.9731847
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.9828579
+</td>
+<td style="text-align:right;">
+0.9766482
+</td>
+<td style="text-align:right;">
+0.9873441
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.9834307
+</td>
+<td style="text-align:right;">
+0.9796872
+</td>
+<td style="text-align:right;">
+0.9874296
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+0.8655078
+</td>
+<td style="text-align:right;">
+0.8465271
+</td>
+<td style="text-align:right;">
+0.8788770
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.3664916
+</td>
+<td style="text-align:right;">
+0.1663615
+</td>
+<td style="text-align:right;">
+0.5666217
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+0.7730187
+</td>
+<td style="text-align:right;">
+0.6703210
+</td>
+<td style="text-align:right;">
+0.9519951
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.4012707
+</td>
+<td style="text-align:right;">
+0.2718005
+</td>
+<td style="text-align:right;">
+0.4865596
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.6188364
+</td>
+<td style="text-align:right;">
+0.5950589
+</td>
+<td style="text-align:right;">
+0.6358414
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.8863055
+</td>
+<td style="text-align:right;">
+0.8770226
+</td>
+<td style="text-align:right;">
+0.8964278
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.9530149
+</td>
+<td style="text-align:right;">
+0.9482549
+</td>
+<td style="text-align:right;">
+0.9582989
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+0.9827986
+</td>
+<td style="text-align:right;">
+0.9793295
+</td>
+<td style="text-align:right;">
+0.9849490
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+0.9814348
+</td>
+<td style="text-align:right;">
+0.9770969
+</td>
+<td style="text-align:right;">
+0.9843930
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.7381219
+</td>
+<td style="text-align:right;">
+0.6632634
+</td>
+<td style="text-align:right;">
+0.7784507
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+0.6811118
+</td>
+<td style="text-align:right;">
+0.6020442
+</td>
+<td style="text-align:right;">
+0.7736269
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.7935392
+</td>
+<td style="text-align:right;">
+0.7285850
+</td>
+<td style="text-align:right;">
+0.8265042
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.4387911
+</td>
+<td style="text-align:right;">
+0.3840331
+</td>
+<td style="text-align:right;">
+0.4783797
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+-0.1060240
+</td>
+<td style="text-align:right;">
+-0.1820605
+</td>
+<td style="text-align:right;">
+0.0115500
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+-0.1773931
+</td>
+<td style="text-align:right;">
+-0.3473402
+</td>
+<td style="text-align:right;">
+0.0178946
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+-0.2905308
+</td>
+<td style="text-align:right;">
+-0.3913724
+</td>
+<td style="text-align:right;">
+-0.1401240
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + aou
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+-0.3204178
+</td>
+<td style="text-align:right;">
+-0.3994769
+</td>
+<td style="text-align:right;">
+-0.2413586
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + aou
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.3808908
+</td>
+<td style="text-align:right;">
+-0.8025968
+</td>
+<td style="text-align:right;">
+-0.1677927
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + aou
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.3667360
+</td>
+<td style="text-align:right;">
+0.1977432
+</td>
+<td style="text-align:right;">
+0.5315426
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + aou
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.5654052
+</td>
+<td style="text-align:right;">
+0.5175859
+</td>
+<td style="text-align:right;">
+0.6576985
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + aou
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.3234264
+</td>
+<td style="text-align:right;">
+0.2742629
+</td>
+<td style="text-align:right;">
+0.3605035
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + aou
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+-0.3752018
+</td>
+<td style="text-align:right;">
+-0.3841962
+</td>
+<td style="text-align:right;">
+-0.3590248
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + aou
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+-0.8431665
+</td>
+<td style="text-align:right;">
+-0.8844208
+</td>
+<td style="text-align:right;">
+-0.8098942
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + aou
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+-0.8823846
+</td>
+<td style="text-align:right;">
+-0.9204041
+</td>
+<td style="text-align:right;">
+-0.8548853
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + aou
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+-0.1506148
+</td>
+<td style="text-align:right;">
+-0.2804254
+</td>
+<td style="text-align:right;">
+0.0595223
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + aou
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.1863525
+</td>
+<td style="text-align:right;">
+-0.4121818
+</td>
+<td style="text-align:right;">
+-0.0726294
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + aou
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+-0.4652953
+</td>
+<td style="text-align:right;">
+-0.6398472
+</td>
+<td style="text-align:right;">
+-0.3218031
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + aou
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+-0.2730374
+</td>
+<td style="text-align:right;">
+-0.4122999
+</td>
+<td style="text-align:right;">
+-0.1049391
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + aou
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.4801963
+</td>
+<td style="text-align:right;">
+0.4337535
+</td>
+<td style="text-align:right;">
+0.5403018
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + aou
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.7817752
+</td>
+<td style="text-align:right;">
+0.6709048
+</td>
+<td style="text-align:right;">
+0.8398204
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + aou
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+0.5355616
+</td>
+<td style="text-align:right;">
+0.4971850
+</td>
+<td style="text-align:right;">
+0.5637747
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+-0.7546064
+</td>
+<td style="text-align:right;">
+-0.8205875
+</td>
+<td style="text-align:right;">
+-0.6886253
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.4789269
+</td>
+<td style="text-align:right;">
+-0.8856021
+</td>
+<td style="text-align:right;">
+-0.2588343
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.2218561
+</td>
+<td style="text-align:right;">
+0.0641494
+</td>
+<td style="text-align:right;">
+0.3796473
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.3814365
+</td>
+<td style="text-align:right;">
+0.2914040
+</td>
+<td style="text-align:right;">
+0.5318781
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+-0.2939656
+</td>
+<td style="text-align:right;">
+-0.4394208
+</td>
+<td style="text-align:right;">
+-0.1986957
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+-0.6894729
+</td>
+<td style="text-align:right;">
+-0.8157782
+</td>
+<td style="text-align:right;">
+-0.6104052
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+-0.9127029
+</td>
+<td style="text-align:right;">
+-0.9275506
+</td>
+<td style="text-align:right;">
+-0.8838423
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+-0.9428290
+</td>
+<td style="text-align:right;">
+-0.9569918
+</td>
+<td style="text-align:right;">
+-0.9261285
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+-0.3263555
+</td>
+<td style="text-align:right;">
+-0.4980194
+</td>
+<td style="text-align:right;">
+-0.0953855
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.4548601
+</td>
+<td style="text-align:right;">
+-0.6413552
+</td>
+<td style="text-align:right;">
+-0.2813245
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+-0.5834263
+</td>
+<td style="text-align:right;">
+-0.7494230
+</td>
+<td style="text-align:right;">
+-0.3274417
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+-0.3472287
+</td>
+<td style="text-align:right;">
+-0.4785996
+</td>
+<td style="text-align:right;">
+-0.2034680
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.4904959
+</td>
+<td style="text-align:right;">
+0.2909136
+</td>
+<td style="text-align:right;">
+0.6421073
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.7278335
+</td>
+<td style="text-align:right;">
+0.5635137
+</td>
+<td style="text-align:right;">
+0.8260744
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+0.4599657
+</td>
+<td style="text-align:right;">
+0.3846662
+</td>
+<td style="text-align:right;">
+0.5026769
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+-0.1142834
+</td>
+<td style="text-align:right;">
+-0.3269080
+</td>
+<td style="text-align:right;">
+0.0983411
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.5995155
+</td>
+<td style="text-align:right;">
+-0.8894902
+</td>
+<td style="text-align:right;">
+-0.4362751
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.1040251
+</td>
+<td style="text-align:right;">
+-0.0834228
+</td>
+<td style="text-align:right;">
+0.2702540
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.2908352
+</td>
+<td style="text-align:right;">
+0.1769162
+</td>
+<td style="text-align:right;">
+0.4594181
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+-0.3342587
+</td>
+<td style="text-align:right;">
+-0.4794617
+</td>
+<td style="text-align:right;">
+-0.2347506
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+-0.6996258
+</td>
+<td style="text-align:right;">
+-0.8203213
+</td>
+<td style="text-align:right;">
+-0.6182618
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+-0.8900200
+</td>
+<td style="text-align:right;">
+-0.9085353
+</td>
+<td style="text-align:right;">
+-0.8531211
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+-0.9083260
+</td>
+<td style="text-align:right;">
+-0.9237634
+</td>
+<td style="text-align:right;">
+-0.8868130
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+-0.3026919
+</td>
+<td style="text-align:right;">
+-0.4334169
+</td>
+<td style="text-align:right;">
+-0.1461461
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.3558503
+</td>
+<td style="text-align:right;">
+-0.5767087
+</td>
+<td style="text-align:right;">
+-0.1686160
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+-0.5046500
+</td>
+<td style="text-align:right;">
+-0.7061679
+</td>
+<td style="text-align:right;">
+-0.1943630
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+-0.3180435
+</td>
+<td style="text-align:right;">
+-0.4671068
+</td>
+<td style="text-align:right;">
+-0.1939412
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.4645773
+</td>
+<td style="text-align:right;">
+0.3503271
+</td>
+<td style="text-align:right;">
+0.5346618
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.7498708
+</td>
+<td style="text-align:right;">
+0.6265875
+</td>
+<td style="text-align:right;">
+0.8240243
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+0.5128844
+</td>
+<td style="text-align:right;">
+0.4651937
+</td>
+<td style="text-align:right;">
+0.5391572
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+-0.2720794
+</td>
+<td style="text-align:right;">
+-0.3974519
+</td>
+<td style="text-align:right;">
+-0.1467068
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.9082439
+</td>
+<td style="text-align:right;">
+-0.9556199
+</td>
+<td style="text-align:right;">
+-0.8842665
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+-0.7525464
+</td>
+<td style="text-align:right;">
+-0.7776079
+</td>
+<td style="text-align:right;">
+-0.7123535
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+-0.4375259
+</td>
+<td style="text-align:right;">
+-0.5211514
+</td>
+<td style="text-align:right;">
+-0.3008782
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+-0.6586231
+</td>
+<td style="text-align:right;">
+-0.7702964
+</td>
+<td style="text-align:right;">
+-0.5723609
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+-0.8203657
+</td>
+<td style="text-align:right;">
+-0.9133062
+</td>
+<td style="text-align:right;">
+-0.7570808
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+-0.9013195
+</td>
+<td style="text-align:right;">
+-0.9345277
+</td>
+<td style="text-align:right;">
+-0.8530167
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+-0.8911064
+</td>
+<td style="text-align:right;">
+-0.9228341
+</td>
+<td style="text-align:right;">
+-0.8622036
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+-0.6448486
+</td>
+<td style="text-align:right;">
+-0.7244787
+</td>
+<td style="text-align:right;">
+-0.5964603
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.7721886
+</td>
+<td style="text-align:right;">
+-0.8599949
+</td>
+<td style="text-align:right;">
+-0.5992546
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+-0.6797387
+</td>
+<td style="text-align:right;">
+-0.9201475
+</td>
+<td style="text-align:right;">
+-0.2796806
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+-0.4415636
+</td>
+<td style="text-align:right;">
+-0.7810932
+</td>
+<td style="text-align:right;">
+-0.0087596
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+-0.4372282
+</td>
+<td style="text-align:right;">
+-0.7525621
+</td>
+<td style="text-align:right;">
+-0.0022405
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+-0.5293566
+</td>
+<td style="text-align:right;">
+-0.6746008
+</td>
+<td style="text-align:right;">
+-0.3952406
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+-0.4098244
+</td>
+<td style="text-align:right;">
+-0.4651391
+</td>
+<td style="text-align:right;">
+-0.3757137
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+-0.8561457
+</td>
+<td style="text-align:right;">
+-0.9222475
+</td>
+<td style="text-align:right;">
+-0.7900439
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.2709377
+</td>
+<td style="text-align:right;">
+-0.8260538
+</td>
+<td style="text-align:right;">
+0.0785804
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+-0.1826668
+</td>
+<td style="text-align:right;">
+-0.2141767
+</td>
+<td style="text-align:right;">
+-0.1486422
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.0706268
+</td>
+<td style="text-align:right;">
+-0.0146505
+</td>
+<td style="text-align:right;">
+0.2173700
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+-0.5837566
+</td>
+<td style="text-align:right;">
+-0.6672197
+</td>
+<td style="text-align:right;">
+-0.4960603
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+-0.8078776
+</td>
+<td style="text-align:right;">
+-0.8629943
+</td>
+<td style="text-align:right;">
+-0.7413223
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+-0.7702647
+</td>
+<td style="text-align:right;">
+-0.7999049
+</td>
+<td style="text-align:right;">
+-0.7217187
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+-0.6182473
+</td>
+<td style="text-align:right;">
+-0.7023908
+</td>
+<td style="text-align:right;">
+-0.5265288
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+-0.5199755
+</td>
+<td style="text-align:right;">
+-0.6387587
+</td>
+<td style="text-align:right;">
+-0.4302120
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.5594755
+</td>
+<td style="text-align:right;">
+-0.6956774
+</td>
+<td style="text-align:right;">
+-0.4038396
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+-0.6154344
+</td>
+<td style="text-align:right;">
+-0.7490542
+</td>
+<td style="text-align:right;">
+-0.3491987
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+-0.3708375
+</td>
+<td style="text-align:right;">
+-0.4830076
+</td>
+<td style="text-align:right;">
+-0.1888006
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.4322701
+</td>
+<td style="text-align:right;">
+0.2217531
+</td>
+<td style="text-align:right;">
+0.5807212
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.7466707
+</td>
+<td style="text-align:right;">
+0.5749538
+</td>
+<td style="text-align:right;">
+0.8582143
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+0.7649419
+</td>
+<td style="text-align:right;">
+0.6928230
+</td>
+<td style="text-align:right;">
+0.8232427
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + temp
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.8083028
+</td>
+<td style="text-align:right;">
+0.7461379
+</td>
+<td style="text-align:right;">
+0.8704676
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + temp
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+0.9642167
+</td>
+<td style="text-align:right;">
+0.9536490
+</td>
+<td style="text-align:right;">
+0.9841097
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + temp
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.9291252
+</td>
+<td style="text-align:right;">
+0.8991941
+</td>
+<td style="text-align:right;">
+0.9444203
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + temp
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.9443454
+</td>
+<td style="text-align:right;">
+0.9436869
+</td>
+<td style="text-align:right;">
+0.9447623
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + temp
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.9044437
+</td>
+<td style="text-align:right;">
+0.8857549
+</td>
+<td style="text-align:right;">
+0.9340220
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + temp
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.9030197
+</td>
+<td style="text-align:right;">
+0.8738877
+</td>
+<td style="text-align:right;">
+0.9466785
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + temp
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+0.8957684
+</td>
+<td style="text-align:right;">
+0.8494078
+</td>
+<td style="text-align:right;">
+0.9468865
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + temp
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+0.9409074
+</td>
+<td style="text-align:right;">
+0.9235060
+</td>
+<td style="text-align:right;">
+0.9555321
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + temp
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.6829503
+</td>
+<td style="text-align:right;">
+0.5361236
+</td>
+<td style="text-align:right;">
+0.7782521
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + temp
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+0.9031822
+</td>
+<td style="text-align:right;">
+0.8665411
+</td>
+<td style="text-align:right;">
+0.9243865
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + temp
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.9453295
+</td>
+<td style="text-align:right;">
+0.9242144
+</td>
+<td style="text-align:right;">
+0.9613389
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + temp
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.7563566
+</td>
+<td style="text-align:right;">
+0.6986604
+</td>
+<td style="text-align:right;">
+0.8369006
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + temp
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.8223865
+</td>
+<td style="text-align:right;">
+0.8031140
+</td>
+<td style="text-align:right;">
+0.8374154
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + temp
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.7942894
+</td>
+<td style="text-align:right;">
+0.7310346
+</td>
+<td style="text-align:right;">
+0.8440221
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal + temp
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+0.6252920
+</td>
+<td style="text-align:right;">
+0.6234524
+</td>
+<td style="text-align:right;">
+0.6283661
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+-0.1970603
+</td>
+<td style="text-align:right;">
+-0.4925249
+</td>
+<td style="text-align:right;">
+0.0984044
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+0.6021452
+</td>
+<td style="text-align:right;">
+0.3501793
+</td>
+<td style="text-align:right;">
+0.9843708
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.8434909
+</td>
+<td style="text-align:right;">
+0.8288376
+</td>
+<td style="text-align:right;">
+0.8536435
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.8914583
+</td>
+<td style="text-align:right;">
+0.8712353
+</td>
+<td style="text-align:right;">
+0.9079382
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.9262432
+</td>
+<td style="text-align:right;">
+0.9028561
+</td>
+<td style="text-align:right;">
+0.9383553
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.9412560
+</td>
+<td style="text-align:right;">
+0.9121230
+</td>
+<td style="text-align:right;">
+0.9664710
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+0.9538424
+</td>
+<td style="text-align:right;">
+0.9441279
+</td>
+<td style="text-align:right;">
+0.9652461
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+0.8661580
+</td>
+<td style="text-align:right;">
+0.8295180
+</td>
+<td style="text-align:right;">
+0.9052449
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.8729925
+</td>
+<td style="text-align:right;">
+0.8163140
+</td>
+<td style="text-align:right;">
+0.9324414
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+0.8797572
+</td>
+<td style="text-align:right;">
+0.8671098
+</td>
+<td style="text-align:right;">
+0.9004084
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.9325070
+</td>
+<td style="text-align:right;">
+0.9195800
+</td>
+<td style="text-align:right;">
+0.9462632
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.9590036
+</td>
+<td style="text-align:right;">
+0.9460702
+</td>
+<td style="text-align:right;">
+0.9714596
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.9770461
+</td>
+<td style="text-align:right;">
+0.9673934
+</td>
+<td style="text-align:right;">
+0.9836248
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.9809415
+</td>
+<td style="text-align:right;">
+0.9752697
+</td>
+<td style="text-align:right;">
+0.9862312
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+0.8870701
+</td>
+<td style="text-align:right;">
+0.8720456
+</td>
+<td style="text-align:right;">
+0.8985313
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.0957067
+</td>
+<td style="text-align:right;">
+-0.2851561
+</td>
+<td style="text-align:right;">
+0.4765695
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+0.3288859
+</td>
+<td style="text-align:right;">
+-0.0666247
+</td>
+<td style="text-align:right;">
+0.9165617
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.6943336
+</td>
+<td style="text-align:right;">
+0.6700243
+</td>
+<td style="text-align:right;">
+0.7297242
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.8234765
+</td>
+<td style="text-align:right;">
+0.8120377
+</td>
+<td style="text-align:right;">
+0.8393872
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.9609444
+</td>
+<td style="text-align:right;">
+0.9461412
+</td>
+<td style="text-align:right;">
+0.9724011
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.9686384
+</td>
+<td style="text-align:right;">
+0.9614603
+</td>
+<td style="text-align:right;">
+0.9786443
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+0.9472160
+</td>
+<td style="text-align:right;">
+0.9381567
+</td>
+<td style="text-align:right;">
+0.9554206
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+0.8864124
+</td>
+<td style="text-align:right;">
+0.8635126
+</td>
+<td style="text-align:right;">
+0.9069375
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.7469767
+</td>
+<td style="text-align:right;">
+0.6221441
+</td>
+<td style="text-align:right;">
+0.8119398
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+0.7887297
+</td>
+<td style="text-align:right;">
+0.7688057
+</td>
+<td style="text-align:right;">
+0.8186148
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.8270612
+</td>
+<td style="text-align:right;">
+0.8263082
+</td>
+<td style="text-align:right;">
+0.8275029
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.5383686
+</td>
+<td style="text-align:right;">
+0.5154418
+</td>
+<td style="text-align:right;">
+0.5757686
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+-0.0002521
+</td>
+<td style="text-align:right;">
+-0.1147317
+</td>
+<td style="text-align:right;">
+0.1620059
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+-0.1180974
+</td>
+<td style="text-align:right;">
+-0.3117247
+</td>
+<td style="text-align:right;">
+0.1047392
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+-0.2168616
+</td>
+<td style="text-align:right;">
+-0.3394501
+</td>
+<td style="text-align:right;">
+-0.0158769
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + aou
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+-0.5357809
+</td>
+<td style="text-align:right;">
+-0.6951794
+</td>
+<td style="text-align:right;">
+-0.3763824
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + aou
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.4990593
+</td>
+<td style="text-align:right;">
+-0.8541420
+</td>
+<td style="text-align:right;">
+-0.3068861
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + aou
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.1918769
+</td>
+<td style="text-align:right;">
+0.0984485
+</td>
+<td style="text-align:right;">
+0.2724416
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + aou
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.5210216
+</td>
+<td style="text-align:right;">
+0.4648236
+</td>
+<td style="text-align:right;">
+0.5831578
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + aou
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.3527970
+</td>
+<td style="text-align:right;">
+0.2868502
+</td>
+<td style="text-align:right;">
+0.4034624
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + aou
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+-0.2234188
+</td>
+<td style="text-align:right;">
+-0.2691649
+</td>
+<td style="text-align:right;">
+-0.1708788
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + aou
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+-0.7777354
+</td>
+<td style="text-align:right;">
+-0.7955611
+</td>
+<td style="text-align:right;">
+-0.7682999
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + aou
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+-0.8213251
+</td>
+<td style="text-align:right;">
+-0.8549910
+</td>
+<td style="text-align:right;">
+-0.7629141
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + aou
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+-0.4008331
+</td>
+<td style="text-align:right;">
+-0.5199960
+</td>
+<td style="text-align:right;">
+-0.2322697
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + aou
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.2389888
+</td>
+<td style="text-align:right;">
+-0.4400291
+</td>
+<td style="text-align:right;">
+-0.1138087
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + aou
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+-0.4491641
+</td>
+<td style="text-align:right;">
+-0.6024802
+</td>
+<td style="text-align:right;">
+-0.3294566
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + aou
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+-0.1962460
+</td>
+<td style="text-align:right;">
+-0.2876287
+</td>
+<td style="text-align:right;">
+-0.0712770
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + aou
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.4428086
+</td>
+<td style="text-align:right;">
+0.3729528
+</td>
+<td style="text-align:right;">
+0.4814181
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + aou
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.7168733
+</td>
+<td style="text-align:right;">
+0.5994452
+</td>
+<td style="text-align:right;">
+0.7774554
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + aou
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+0.8411410
+</td>
+<td style="text-align:right;">
+0.7827766
+</td>
+<td style="text-align:right;">
+0.8755862
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+-0.8701081
+</td>
+<td style="text-align:right;">
+-0.8896045
+</td>
+<td style="text-align:right;">
+-0.8506118
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.5907620
+</td>
+<td style="text-align:right;">
+-0.9204402
+</td>
+<td style="text-align:right;">
+-0.3838306
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.0138335
+</td>
+<td style="text-align:right;">
+-0.0651455
+</td>
+<td style="text-align:right;">
+0.0827564
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.3369577
+</td>
+<td style="text-align:right;">
+0.2359324
+</td>
+<td style="text-align:right;">
+0.4530053
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+-0.3084230
+</td>
+<td style="text-align:right;">
+-0.4398904
+</td>
+<td style="text-align:right;">
+-0.2265166
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+-0.6205222
+</td>
+<td style="text-align:right;">
+-0.7676605
+</td>
+<td style="text-align:right;">
+-0.5255632
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+-0.8754416
+</td>
+<td style="text-align:right;">
+-0.9104691
+</td>
+<td style="text-align:right;">
+-0.8480362
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+-0.9209951
+</td>
+<td style="text-align:right;">
+-0.9546983
+</td>
+<td style="text-align:right;">
+-0.8825822
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+-0.6160034
+</td>
+<td style="text-align:right;">
+-0.7135869
+</td>
+<td style="text-align:right;">
+-0.4593938
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.5150858
+</td>
+<td style="text-align:right;">
+-0.6835792
+</td>
+<td style="text-align:right;">
+-0.3664827
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+-0.6046740
+</td>
+<td style="text-align:right;">
+-0.7528236
+</td>
+<td style="text-align:right;">
+-0.3792911
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+-0.3937474
+</td>
+<td style="text-align:right;">
+-0.4718855
+</td>
+<td style="text-align:right;">
+-0.3057694
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.3993088
+</td>
+<td style="text-align:right;">
+0.2087164
+</td>
+<td style="text-align:right;">
+0.5740224
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.6400542
+</td>
+<td style="text-align:right;">
+0.4756840
+</td>
+<td style="text-align:right;">
+0.7308598
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+0.7689861
+</td>
+<td style="text-align:right;">
+0.6589550
+</td>
+<td style="text-align:right;">
+0.8395240
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+-0.3759632
+</td>
+<td style="text-align:right;">
+-0.6742742
+</td>
+<td style="text-align:right;">
+-0.0776522
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.6811688
+</td>
+<td style="text-align:right;">
+-0.9091989
+</td>
+<td style="text-align:right;">
+-0.5645739
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+-0.0722659
+</td>
+<td style="text-align:right;">
+-0.1782708
+</td>
+<td style="text-align:right;">
+0.0109859
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.2620265
+</td>
+<td style="text-align:right;">
+0.1379686
+</td>
+<td style="text-align:right;">
+0.3950180
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+-0.3544333
+</td>
+<td style="text-align:right;">
+-0.4849167
+</td>
+<td style="text-align:right;">
+-0.2684414
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+-0.6430968
+</td>
+<td style="text-align:right;">
+-0.7791411
+</td>
+<td style="text-align:right;">
+-0.5602545
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+-0.8842076
+</td>
+<td style="text-align:right;">
+-0.9081328
+</td>
+<td style="text-align:right;">
+-0.8630003
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+-0.9087176
+</td>
+<td style="text-align:right;">
+-0.9408662
+</td>
+<td style="text-align:right;">
+-0.8685719
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+-0.5644977
+</td>
+<td style="text-align:right;">
+-0.6700312
+</td>
+<td style="text-align:right;">
+-0.4166668
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.4336981
+</td>
+<td style="text-align:right;">
+-0.6280426
+</td>
+<td style="text-align:right;">
+-0.2933096
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+-0.5222073
+</td>
+<td style="text-align:right;">
+-0.7011387
+</td>
+<td style="text-align:right;">
+-0.2479914
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+-0.3415884
+</td>
+<td style="text-align:right;">
+-0.4348758
+</td>
+<td style="text-align:right;">
+-0.2696045
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.3927651
+</td>
+<td style="text-align:right;">
+0.2692242
+</td>
+<td style="text-align:right;">
+0.5024439
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.6646076
+</td>
+<td style="text-align:right;">
+0.5315018
+</td>
+<td style="text-align:right;">
+0.7389474
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+0.7950021
+</td>
+<td style="text-align:right;">
+0.7064458
+</td>
+<td style="text-align:right;">
+0.8525925
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+-0.4870671
+</td>
+<td style="text-align:right;">
+-0.5825606
+</td>
+<td style="text-align:right;">
+-0.3915735
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.9063989
+</td>
+<td style="text-align:right;">
+-0.9417344
+</td>
+<td style="text-align:right;">
+-0.8835572
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+-0.8144516
+</td>
+<td style="text-align:right;">
+-0.8313197
+</td>
+<td style="text-align:right;">
+-0.7988779
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+-0.4533065
+</td>
+<td style="text-align:right;">
+-0.5395385
+</td>
+<td style="text-align:right;">
+-0.3454316
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+-0.7090942
+</td>
+<td style="text-align:right;">
+-0.8022560
+</td>
+<td style="text-align:right;">
+-0.6370809
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+-0.8276404
+</td>
+<td style="text-align:right;">
+-0.9125503
+</td>
+<td style="text-align:right;">
+-0.7757865
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+-0.9424477
+</td>
+<td style="text-align:right;">
+-0.9611236
+</td>
+<td style="text-align:right;">
+-0.9326506
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+-0.9267570
+</td>
+<td style="text-align:right;">
+-0.9447705
+</td>
+<td style="text-align:right;">
+-0.8912038
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+-0.8865087
+</td>
+<td style="text-align:right;">
+-0.9150422
+</td>
+<td style="text-align:right;">
+-0.8593740
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.8811533
+</td>
+<td style="text-align:right;">
+-0.9444551
+</td>
+<td style="text-align:right;">
+-0.7702716
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+-0.7659445
+</td>
+<td style="text-align:right;">
+-0.9702886
+</td>
+<td style="text-align:right;">
+-0.4195500
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+-0.8155204
+</td>
+<td style="text-align:right;">
+-0.9781636
+</td>
+<td style="text-align:right;">
+-0.5728051
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+-0.7278676
+</td>
+<td style="text-align:right;">
+-0.9340590
+</td>
+<td style="text-align:right;">
+-0.4183801
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+-0.7857336
+</td>
+<td style="text-align:right;">
+-0.8447995
+</td>
+<td style="text-align:right;">
+-0.7373514
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+-0.6814303
+</td>
+<td style="text-align:right;">
+-0.6837656
+</td>
+<td style="text-align:right;">
+-0.6779908
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+-0.6540142
+</td>
+<td style="text-align:right;">
+-0.6747236
+</td>
+<td style="text-align:right;">
+-0.6333048
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.3599727
+</td>
+<td style="text-align:right;">
+-0.8639771
+</td>
+<td style="text-align:right;">
+0.0036666
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+-0.3786857
+</td>
+<td style="text-align:right;">
+-0.4403097
+</td>
+<td style="text-align:right;">
+-0.3460874
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.0558674
+</td>
+<td style="text-align:right;">
+-0.0342569
+</td>
+<td style="text-align:right;">
+0.1656972
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+-0.6119284
+</td>
+<td style="text-align:right;">
+-0.6780948
+</td>
+<td style="text-align:right;">
+-0.5445032
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+-0.8150526
+</td>
+<td style="text-align:right;">
+-0.8557191
+</td>
+<td style="text-align:right;">
+-0.7809044
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+-0.8664108
+</td>
+<td style="text-align:right;">
+-0.8755773
+</td>
+<td style="text-align:right;">
+-0.8536128
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+-0.7210738
+</td>
+<td style="text-align:right;">
+-0.7901577
+</td>
+<td style="text-align:right;">
+-0.6392995
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+-0.6228852
+</td>
+<td style="text-align:right;">
+-0.7482130
+</td>
+<td style="text-align:right;">
+-0.3776199
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.6172909
+</td>
+<td style="text-align:right;">
+-0.7302045
+</td>
+<td style="text-align:right;">
+-0.4958488
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+-0.6406181
+</td>
+<td style="text-align:right;">
+-0.7658603
+</td>
+<td style="text-align:right;">
+-0.4015260
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+-0.4570950
+</td>
+<td style="text-align:right;">
+-0.5182583
+</td>
+<td style="text-align:right;">
+-0.3596019
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.3003275
+</td>
+<td style="text-align:right;">
+0.0894734
+</td>
+<td style="text-align:right;">
+0.4730735
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.5848357
+</td>
+<td style="text-align:right;">
+0.4144044
+</td>
+<td style="text-align:right;">
+0.6737145
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp + silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+0.7143782
+</td>
+<td style="text-align:right;">
+0.5797220
+</td>
+<td style="text-align:right;">
+0.8063599
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<pre class="r"><code>rm(cor_predictors, cor_predictors_stats)</code></pre>
+</div>
+<div id="c-vs-individual-predictors" class="section level3" number="2.2.3">
+<h3 number="2.2.3"><span class="header-section-number">2.2.3</span> C* vs individual predictors</h3>
+<p>Below, the range of correlations coefficients for C* with each predictor is plotted per basin (facet) and density slab (color). Note that the range indicates the min and max values of in total 3 calculated coefficients (one per era).</p>
+<pre class="r"><code>cor_target_predictor &lt;- cor_target_predictor %&gt;% 
+  rename(predictor = term)
+
+# calculate min, max, mean across all eras
+cor_target_predictor_stats &lt;- cor_target_predictor %&gt;%
+  select(-era) %&gt;% 
+  group_by(predictor, basin, gamma_slab) %&gt;% 
+  summarise_all(list(mean_r = mean, min_r = min, max_r = max)) %&gt;% 
+  ungroup()
+
+# plot figure
+cor_target_predictor_stats %&gt;% 
+  mutate(predictor = reorder(predictor, mean_r)) %&gt;%
+  ggplot() +
+  geom_vline(xintercept = c(-0.9, 0.9), col = &quot;red&quot;) +
+  geom_vline(xintercept = 0) +
+  geom_linerange(
+    aes(y = predictor, xmin = min_r, xmax = max_r, col = gamma_slab),
+    position = position_dodge(width = 0.6)) +
+  facet_wrap(~basin) +
+  scale_color_viridis_d(direction = -1) +
+  labs(x = &quot;correlation coefficient&quot;, y = &quot;C* correlation with...&quot;) +
+  theme(legend.position = &quot;top&quot;)</code></pre>
+<p><img src="figure/eMLR_assumption_testing.Rmd/correlation_predictors-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># print table
+kable(cor_target_predictor_stats) %&gt;%
+  add_header_above() %&gt;%
+  kable_styling() %&gt;%
+  scroll_box(width = &quot;100%&quot;, height = &quot;400px&quot;)</code></pre>
+<div style="border: 1px solid #ddd; padding: 0px; overflow-y: scroll; height:400px; overflow-x: scroll; width:100%; ">
+<table class="table" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+predictor
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+basin
+</th>
+<th style="text-align:left;position: sticky; top:0; background-color: #FFFFFF;">
+gamma_slab
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+mean_r
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+min_r
+</th>
+<th style="text-align:right;position: sticky; top:0; background-color: #FFFFFF;">
+max_r
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+aou
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.4257037
+</td>
+<td style="text-align:right;">
+0.3050261
+</td>
+<td style="text-align:right;">
+0.5463812
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+0.0011007
+</td>
+<td style="text-align:right;">
+-0.4567240
+</td>
+<td style="text-align:right;">
+0.3050600
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+-0.3599853
+</td>
+<td style="text-align:right;">
+-0.4831120
+</td>
+<td style="text-align:right;">
+-0.2714524
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+-0.6160805
+</td>
+<td style="text-align:right;">
+-0.7620067
+</td>
+<td style="text-align:right;">
+-0.5218440
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+-0.5293894
+</td>
+<td style="text-align:right;">
+-0.7224901
+</td>
+<td style="text-align:right;">
+-0.3622726
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+-0.8111617
+</td>
+<td style="text-align:right;">
+-0.8841032
+</td>
+<td style="text-align:right;">
+-0.7412144
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+-0.9542052
+</td>
+<td style="text-align:right;">
+-0.9744898
+</td>
+<td style="text-align:right;">
+-0.9372449
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+-0.8173077
+</td>
+<td style="text-align:right;">
+-0.9223423
+</td>
+<td style="text-align:right;">
+-0.7579194
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.2020688
+</td>
+<td style="text-align:right;">
+0.0958045
+</td>
+<td style="text-align:right;">
+0.3575592
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.5229878
+</td>
+<td style="text-align:right;">
+-0.5878001
+</td>
+<td style="text-align:right;">
+-0.4627006
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+-0.7149475
+</td>
+<td style="text-align:right;">
+-0.7397185
+</td>
+<td style="text-align:right;">
+-0.6668709
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+-0.2721042
+</td>
+<td style="text-align:right;">
+-0.4802160
+</td>
+<td style="text-align:right;">
+-0.0676211
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.4066106
+</td>
+<td style="text-align:right;">
+0.1442887
+</td>
+<td style="text-align:right;">
+0.7123051
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.3999938
+</td>
+<td style="text-align:right;">
+0.2538982
+</td>
+<td style="text-align:right;">
+0.5134017
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+aou
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+0.5902405
+</td>
+<td style="text-align:right;">
+0.4536741
+</td>
+<td style="text-align:right;">
+0.6655938
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.1682105
+</td>
+<td style="text-align:right;">
+-0.0214146
+</td>
+<td style="text-align:right;">
+0.3578356
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.1102046
+</td>
+<td style="text-align:right;">
+-0.5353149
+</td>
+<td style="text-align:right;">
+0.1942343
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+-0.5443974
+</td>
+<td style="text-align:right;">
+-0.6618570
+</td>
+<td style="text-align:right;">
+-0.4646500
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+-0.8834380
+</td>
+<td style="text-align:right;">
+-0.9315580
+</td>
+<td style="text-align:right;">
+-0.8370877
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+-0.9623587
+</td>
+<td style="text-align:right;">
+-0.9761768
+</td>
+<td style="text-align:right;">
+-0.9504688
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+-0.9592132
+</td>
+<td style="text-align:right;">
+-0.9771524
+</td>
+<td style="text-align:right;">
+-0.9481580
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+-0.9882828
+</td>
+<td style="text-align:right;">
+-0.9891682
+</td>
+<td style="text-align:right;">
+-0.9866398
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+-0.9670831
+</td>
+<td style="text-align:right;">
+-0.9898392
+</td>
+<td style="text-align:right;">
+-0.9533716
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.1882664
+</td>
+<td style="text-align:right;">
+0.1194779
+</td>
+<td style="text-align:right;">
+0.3255117
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.5656066
+</td>
+<td style="text-align:right;">
+-0.6336757
+</td>
+<td style="text-align:right;">
+-0.4794074
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+-0.7056980
+</td>
+<td style="text-align:right;">
+-0.7212579
+</td>
+<td style="text-align:right;">
+-0.6773784
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+-0.3741938
+</td>
+<td style="text-align:right;">
+-0.4944923
+</td>
+<td style="text-align:right;">
+-0.2621640
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.5225118
+</td>
+<td style="text-align:right;">
+0.3699094
+</td>
+<td style="text-align:right;">
+0.7347132
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.4551791
+</td>
+<td style="text-align:right;">
+0.2926882
+</td>
+<td style="text-align:right;">
+0.5883435
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nitrate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+0.6082592
+</td>
+<td style="text-align:right;">
+0.4818771
+</td>
+<td style="text-align:right;">
+0.6739127
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.4329790
+</td>
+<td style="text-align:right;">
+0.3770938
+</td>
+<td style="text-align:right;">
+0.4888643
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.0738974
+</td>
+<td style="text-align:right;">
+-0.5693298
+</td>
+<td style="text-align:right;">
+0.2215028
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+-0.5814707
+</td>
+<td style="text-align:right;">
+-0.7163221
+</td>
+<td style="text-align:right;">
+-0.5026275
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+-0.8888573
+</td>
+<td style="text-align:right;">
+-0.9339216
+</td>
+<td style="text-align:right;">
+-0.8513137
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+-0.9713582
+</td>
+<td style="text-align:right;">
+-0.9819156
+</td>
+<td style="text-align:right;">
+-0.9632254
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+-0.9639331
+</td>
+<td style="text-align:right;">
+-0.9799927
+</td>
+<td style="text-align:right;">
+-0.9552361
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+-0.9902674
+</td>
+<td style="text-align:right;">
+-0.9916043
+</td>
+<td style="text-align:right;">
+-0.9891926
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+-0.9793331
+</td>
+<td style="text-align:right;">
+-0.9847616
+</td>
+<td style="text-align:right;">
+-0.9752612
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.1537325
+</td>
+<td style="text-align:right;">
+0.0258512
+</td>
+<td style="text-align:right;">
+0.3411389
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.6250983
+</td>
+<td style="text-align:right;">
+-0.6490341
+</td>
+<td style="text-align:right;">
+-0.6029461
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+-0.7926061
+</td>
+<td style="text-align:right;">
+-0.8119876
+</td>
+<td style="text-align:right;">
+-0.7735660
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+-0.4030092
+</td>
+<td style="text-align:right;">
+-0.5760908
+</td>
+<td style="text-align:right;">
+-0.2481638
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.4645994
+</td>
+<td style="text-align:right;">
+0.2381820
+</td>
+<td style="text-align:right;">
+0.7289635
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.4379920
+</td>
+<td style="text-align:right;">
+0.2906810
+</td>
+<td style="text-align:right;">
+0.5465248
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+0.5708225
+</td>
+<td style="text-align:right;">
+0.4074345
+</td>
+<td style="text-align:right;">
+0.6527575
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.1145536
+</td>
+<td style="text-align:right;">
+-0.2093641
+</td>
+<td style="text-align:right;">
+0.4384713
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.1172423
+</td>
+<td style="text-align:right;">
+-0.5787435
+</td>
+<td style="text-align:right;">
+0.1522753
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+-0.5885298
+</td>
+<td style="text-align:right;">
+-0.6741509
+</td>
+<td style="text-align:right;">
+-0.4779158
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+-0.6294828
+</td>
+<td style="text-align:right;">
+-0.6588788
+</td>
+<td style="text-align:right;">
+-0.5912845
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+-0.9209250
+</td>
+<td style="text-align:right;">
+-0.9379389
+</td>
+<td style="text-align:right;">
+-0.9074080
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+-0.9145929
+</td>
+<td style="text-align:right;">
+-0.9237131
+</td>
+<td style="text-align:right;">
+-0.9041853
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+-0.9708849
+</td>
+<td style="text-align:right;">
+-0.9812152
+</td>
+<td style="text-align:right;">
+-0.9628120
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate_star
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+-0.9837226
+</td>
+<td style="text-align:right;">
+-0.9907028
+</td>
+<td style="text-align:right;">
+-0.9773058
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.1933206
+</td>
+<td style="text-align:right;">
+0.0717840
+</td>
+<td style="text-align:right;">
+0.3538975
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.4907104
+</td>
+<td style="text-align:right;">
+-0.5706006
+</td>
+<td style="text-align:right;">
+-0.3915576
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+-0.5928063
+</td>
+<td style="text-align:right;">
+-0.6542397
+</td>
+<td style="text-align:right;">
+-0.5013395
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+-0.5859983
+</td>
+<td style="text-align:right;">
+-0.6344462
+</td>
+<td style="text-align:right;">
+-0.5365637
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.2928344
+</td>
+<td style="text-align:right;">
+0.1663605
+</td>
+<td style="text-align:right;">
+0.3744423
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.4198611
+</td>
+<td style="text-align:right;">
+0.3394837
+</td>
+<td style="text-align:right;">
+0.4823191
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+phosphate_star
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+-0.2422183
+</td>
+<td style="text-align:right;">
+-0.3233938
+</td>
+<td style="text-align:right;">
+-0.1998351
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.3454529
+</td>
+<td style="text-align:right;">
+-0.0222728
+</td>
+<td style="text-align:right;">
+0.7131786
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.0593627
+</td>
+<td style="text-align:right;">
+-0.3376650
+</td>
+<td style="text-align:right;">
+0.3419769
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+-0.0214612
+</td>
+<td style="text-align:right;">
+-0.1273098
+</td>
+<td style="text-align:right;">
+0.0874996
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+-0.4025059
+</td>
+<td style="text-align:right;">
+-0.5330835
+</td>
+<td style="text-align:right;">
+-0.3114707
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.3422396
+</td>
+<td style="text-align:right;">
+0.2268827
+</td>
+<td style="text-align:right;">
+0.4549384
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.5745721
+</td>
+<td style="text-align:right;">
+0.4846725
+</td>
+<td style="text-align:right;">
+0.6957571
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+0.8652027
+</td>
+<td style="text-align:right;">
+0.8395932
+</td>
+<td style="text-align:right;">
+0.8872765
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+0.8595183
+</td>
+<td style="text-align:right;">
+0.8081980
+</td>
+<td style="text-align:right;">
+0.9202461
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.0688573
+</td>
+<td style="text-align:right;">
+-0.1894874
+</td>
+<td style="text-align:right;">
+0.3959701
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+0.2237444
+</td>
+<td style="text-align:right;">
+-0.1149619
+</td>
+<td style="text-align:right;">
+0.4004508
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.1008236
+</td>
+<td style="text-align:right;">
+-0.3212833
+</td>
+<td style="text-align:right;">
+0.3318944
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.0419807
+</td>
+<td style="text-align:right;">
+-0.1137675
+</td>
+<td style="text-align:right;">
+0.1887241
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.2026487
+</td>
+<td style="text-align:right;">
+-0.0450544
+</td>
+<td style="text-align:right;">
+0.5828222
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+-0.0464660
+</td>
+<td style="text-align:right;">
+-0.0882693
+</td>
+<td style="text-align:right;">
+0.0241907
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+sal
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+0.2039425
+</td>
+<td style="text-align:right;">
+0.0698266
+</td>
+<td style="text-align:right;">
+0.2820273
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+-0.4398243
+</td>
+<td style="text-align:right;">
+-0.8146090
+</td>
+<td style="text-align:right;">
+-0.0650397
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.3655113
+</td>
+<td style="text-align:right;">
+-0.6304135
+</td>
+<td style="text-align:right;">
+-0.1273678
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+-0.7978005
+</td>
+<td style="text-align:right;">
+-0.8874384
+</td>
+<td style="text-align:right;">
+-0.7523891
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+-0.9079546
+</td>
+<td style="text-align:right;">
+-0.9256080
+</td>
+<td style="text-align:right;">
+-0.8860550
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+-0.9362561
+</td>
+<td style="text-align:right;">
+-0.9443770
+</td>
+<td style="text-align:right;">
+-0.9308264
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+-0.8900594
+</td>
+<td style="text-align:right;">
+-0.9123957
+</td>
+<td style="text-align:right;">
+-0.8559200
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+-0.9339251
+</td>
+<td style="text-align:right;">
+-0.9522556
+</td>
+<td style="text-align:right;">
+-0.9233185
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+-0.8896279
+</td>
+<td style="text-align:right;">
+-0.9366779
+</td>
+<td style="text-align:right;">
+-0.8515038
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+0.0489681
+</td>
+<td style="text-align:right;">
+-0.2468181
+</td>
+<td style="text-align:right;">
+0.2839671
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.6534245
+</td>
+<td style="text-align:right;">
+-0.6634270
+</td>
+<td style="text-align:right;">
+-0.6387187
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+-0.6594733
+</td>
+<td style="text-align:right;">
+-0.6743257
+</td>
+<td style="text-align:right;">
+-0.6340894
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+-0.3308318
+</td>
+<td style="text-align:right;">
+-0.4816955
+</td>
+<td style="text-align:right;">
+-0.1888994
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.5215530
+</td>
+<td style="text-align:right;">
+0.3167772
+</td>
+<td style="text-align:right;">
+0.7739523
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.4865964
+</td>
+<td style="text-align:right;">
+0.3258943
+</td>
+<td style="text-align:right;">
+0.6249562
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+silicate
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+0.5620571
+</td>
+<td style="text-align:right;">
+0.4397192
+</td>
+<td style="text-align:right;">
+0.6479596
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+-0.1637110
+</td>
+<td style="text-align:right;">
+-0.4679999
+</td>
+<td style="text-align:right;">
+0.1405779
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+-0.1338975
+</td>
+<td style="text-align:right;">
+-0.4256512
+</td>
+<td style="text-align:right;">
+0.3218593
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.1265567
+</td>
+<td style="text-align:right;">
+-0.0133036
+</td>
+<td style="text-align:right;">
+0.3039418
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+-0.3787581
+</td>
+<td style="text-align:right;">
+-0.4662194
+</td>
+<td style="text-align:right;">
+-0.3319259
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.4012032
+</td>
+<td style="text-align:right;">
+0.3015352
+</td>
+<td style="text-align:right;">
+0.4961910
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+0.5593374
+</td>
+<td style="text-align:right;">
+0.4928032
+</td>
+<td style="text-align:right;">
+0.6727229
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.1,28.2]
+</td>
+<td style="text-align:right;">
+0.8491987
+</td>
+<td style="text-align:right;">
+0.8060343
+</td>
+<td style="text-align:right;">
+0.8808796
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp
+</td>
+<td style="text-align:left;">
+Atlantic
+</td>
+<td style="text-align:left;">
+(28.2, Inf]
+</td>
+<td style="text-align:right;">
+0.8734885
+</td>
+<td style="text-align:right;">
+0.8057190
+</td>
+<td style="text-align:right;">
+0.9081239
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(-Inf,26]
+</td>
+<td style="text-align:right;">
+-0.4827260
+</td>
+<td style="text-align:right;">
+-0.5443507
+</td>
+<td style="text-align:right;">
+-0.4516717
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26,26.8]
+</td>
+<td style="text-align:right;">
+0.1460625
+</td>
+<td style="text-align:right;">
+-0.1604269
+</td>
+<td style="text-align:right;">
+0.3022958
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(26.8,27.2]
+</td>
+<td style="text-align:right;">
+0.1313019
+</td>
+<td style="text-align:right;">
+-0.2573740
+</td>
+<td style="text-align:right;">
+0.3424459
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.2,27.8]
+</td>
+<td style="text-align:right;">
+0.4058165
+</td>
+<td style="text-align:right;">
+0.2610901
+</td>
+<td style="text-align:right;">
+0.5200775
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.8,27.9]
+</td>
+<td style="text-align:right;">
+0.1448865
+</td>
+<td style="text-align:right;">
+-0.0184683
+</td>
+<td style="text-align:right;">
+0.4649722
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(27.9,28.1]
+</td>
+<td style="text-align:right;">
+-0.1713721
+</td>
+<td style="text-align:right;">
+-0.2210529
+</td>
+<td style="text-align:right;">
+-0.1032673
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+temp
+</td>
+<td style="text-align:left;">
+Indo-Pacific
+</td>
+<td style="text-align:left;">
+(28.1, Inf]
+</td>
+<td style="text-align:right;">
+0.3577591
+</td>
+<td style="text-align:right;">
+0.1545652
+</td>
+<td style="text-align:right;">
+0.4841414
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<pre class="r"><code>rm(cor_target_predictor, cor_target_predictor_stats)</code></pre>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.0.3 (2020-10-10)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: openSUSE Leap 15.2
+
+Matrix products: default
+BLAS:   /usr/local/R-4.0.3/lib64/R/lib/libRblas.so
+LAPACK: /usr/local/R-4.0.3/lib64/R/lib/libRlapack.so
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] corrr_0.4.3      broom_0.7.3      kableExtra_1.3.1 knitr_1.30      
+ [5] olsrr_0.5.3      GGally_2.0.0     lubridate_1.7.9  metR_0.9.0      
+ [9] scico_1.2.0      patchwork_1.1.1  collapse_1.5.0   forcats_0.5.0   
+[13] stringr_1.4.0    dplyr_1.0.2      purrr_0.3.4      readr_1.4.0     
+[17] tidyr_1.1.2      tibble_3.0.4     ggplot2_3.3.3    tidyverse_1.3.0 
+[21] workflowr_1.6.2 
+
+loaded via a namespace (and not attached):
+ [1] fs_1.5.0                 webshot_0.5.2            RColorBrewer_1.1-2      
+ [4] httr_1.4.2               rprojroot_2.0.2          tools_4.0.3             
+ [7] backports_1.1.10         R6_2.5.0                 nortest_1.0-4           
+[10] DBI_1.1.0                colorspace_2.0-0         withr_2.3.0             
+[13] gridExtra_2.3            tidyselect_1.1.0         curl_4.3                
+[16] compiler_4.0.3           git2r_0.27.1             cli_2.2.0               
+[19] rvest_0.3.6              xml2_1.3.2               labeling_0.4.2          
+[22] scales_1.1.1             checkmate_2.0.0          goftest_1.2-2           
+[25] digest_0.6.27            foreign_0.8-80           rmarkdown_2.5           
+[28] rio_0.5.16               pkgconfig_2.0.3          htmltools_0.5.0         
+[31] highr_0.8                dbplyr_1.4.4             rlang_0.4.10            
+[34] readxl_1.3.1             rstudioapi_0.13          farver_2.0.3            
+[37] generics_0.1.0           jsonlite_1.7.2           zip_2.1.1               
+[40] car_3.0-10               magrittr_2.0.1           Matrix_1.2-18           
+[43] Rcpp_1.0.5               munsell_0.5.0            fansi_0.4.1             
+[46] abind_1.4-5              lifecycle_0.2.0          stringi_1.5.3           
+[49] whisker_0.4              yaml_2.2.1               carData_3.0-4           
+[52] plyr_1.8.6               grid_4.0.3               blob_1.2.1              
+[55] parallel_4.0.3           promises_1.1.1           crayon_1.3.4            
+[58] lattice_0.20-41          haven_2.3.1              hms_0.5.3               
+[61] pillar_1.4.7             reprex_0.3.0             glue_1.4.2              
+[64] evaluate_0.14            RcppArmadillo_0.10.1.2.2 data.table_1.13.6       
+[67] modelr_0.1.8             vctrs_0.3.6              httpuv_1.5.4            
+[70] cellranger_1.1.0         gtable_0.3.0             reshape_0.8.8           
+[73] assertthat_0.2.1         xfun_0.20                openxlsx_4.2.3          
+[76] RcppEigen_0.3.3.9.1      later_1.1.0.1            viridisLite_0.3.0       
+[79] ellipsis_0.3.1           here_1.0.1              </code></pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("hide" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = false;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
